@@ -7,6 +7,7 @@
 
 
 #include "draw.h"
+#include "motor.h"
 
 /********************************************************************************/
 void main(void)
@@ -21,8 +22,14 @@ void main(void)
     configure_display_controller_small();  // initalize and  configuration
 #endif
 
-    set_backgound();
+    //set_backgound();
     // Start endless loop
-    draw_rectangles();
+    //draw_rectangles();
+
+    configure_gpios();
+
+    while(1) {
+        check_flag();
+    }
 }
 /********************************************************************************/

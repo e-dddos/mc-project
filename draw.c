@@ -31,8 +31,9 @@ void draw_rectangles(void) {
     enum colors color;
     color = RED;
     j=0;
+    // Start endless loop
     while (1) {
-        printf("Write rectangles\n"); // for debug only
+        //printf("Write rectangles\n"); // for debug only
         for (x=0;x<=(MAX_X)-1-20;x=x+40)
             for (y=0;y<=(MAX_Y)-1-20;y=y+40)
             {
