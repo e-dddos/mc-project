@@ -25,7 +25,7 @@ void main(void)
     // Start endless loop
     //draw_rectangles();
     
-    print_string("Hello,_cruel_world!", 50, 50);
+    print_string("Blue_screen_of_death", 50, 50);
     //draw_rectangle();
 }
 /********************************************************************************/
