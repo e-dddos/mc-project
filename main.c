@@ -23,6 +23,9 @@ void main(void)
 
     set_backgound();
     // Start endless loop
-    draw_rectangles();
+    //draw_rectangles();
+    
+    print_char();
+    //draw_rectangle();
 }
 /********************************************************************************/

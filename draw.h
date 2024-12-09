@@ -25,15 +25,19 @@
     #define MAX_Y 272
     #endif
 
+#define FONT_SIZE 32
 
 /* some predefined basic colors to use with names */
 enum colors{BLACK=0x00000000,WHITE=0x00FFFFFF,GREY=0x00AAAAAA,RED=0x00FF0000,GREEN=0x0000FF00,BLUE=0x000000FF,YELLOW=0x00FFFF00, LOL=0x00AAFFAA};
 /* same values as array for indexed colors */
-static int colorarray[]={0x00000000,0x00FFFFFF,0x00AAAAAA,0x00FF0000,0x0000FF00,0x000000FF,0x00FFFF00};
+static int colorarray[]={BLACK,WHITE,GREY,RED,GREEN,BLUE,YELLOW};
 
+static const char bitmap_72[] = {0,0,0,248,248,248,0,0,0,0,0,0,0,0,0,0,0,0,0,248,248,248,0,0,0,0,0,255,255,255,96,96,96,96,96,96,96,96,96,96,96,96,96,255,255,255,0,0,0,0,0,255,255,255,0,0,0,0,0,0,0,0,0,0,0,0,0,255,255,255,0,0,0,0,0,7,7,7,0,0,0,0,0,0,0,0,0,0,0,0,0,7,7,7,0,0};
+static const char char_width = 24;
 
 void set_backgound(void);
 void draw_rectangles(void);
-
+void print_char(void);
+void draw_rectangle(void);
 
 #endif /* DRAW_H_ */
