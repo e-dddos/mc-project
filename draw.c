@@ -52,29 +52,30 @@ void draw_rectangles(void)
     }
 }
 
-void print_char(void)
+void print_char(char character, int x_pos, int y_pos)
 {
-
-    int x, y, x_global, y_global, byte_row;
+    char* bitmap = char_addr[character - 33];
+    char char_width = char_width_array[character - 33];
+    int x, y, byte_row;
     int i, j;
     char byte = 0;
     enum colors font_color, backgroud_color;
     font_color = WHITE;
     backgroud_color = BLUE;
-    x_global = 100;
-    y_global = 100;
     i = 0;
+
+    //see https://onmenwhostareongraphs.wordpress.com/2019/10/20/monochrome-bitmap-fonts-in-c-header-files/ for understanding bitmaps
+    
     for (byte_row = 0; byte_row < FONT_SIZE / 8; byte_row++)
     {
-        window_set(x_global, y_global + byte_row * 8, x_global + char_width - 1, (y_global + byte_row * 8) + 7); // set rectangle position see B.4
+        window_set(x_pos, y_pos + byte_row * 8, x_pos + char_width - 1, (y_pos + byte_row * 8) + 7); // set rectangle position see B.4
         write_command(0x2C);                                                                                 // write pixel command
-        printf("char_width=%d\n", char_width);
         for (y = 0; y < 8; y++)
         {
             for (x = 0; x < char_width; x++)
             {
                 i = x + byte_row * char_width;
-                byte = bitmap_72[i] >> y;
+                byte = bitmap[i] >> y;
                 if (byte % 2 == 1)
                 {
                     write_data((font_color >> 16) & 0xff); // red
@@ -89,6 +90,22 @@ void print_char(void)
                 }
             }
         }
+    }
+}
+
+void print_string(char* string, int x_pos, int y_pos)
+{
+    int i = 0;
+    int x_current = x_pos;
+    int y_current = y_pos;
+    while (string[i] != '\0')
+    {
+        printf("character = %c\n", string[i]);
+        printf("char_width_array[string[i] - 33] = %d\n", char_width_array[string[i] - 33]);
+        printf("x_current = %d\n", x_current);
+        print_char(string[i], x_current, y_current);
+        x_current = x_current + char_width_array[string[i] - 33] + 7;
+        i++;
     }
 }
 
