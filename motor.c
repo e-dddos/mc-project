@@ -7,6 +7,8 @@
 
 #include "motor.h"
 
+#include "calc.h" //local calc of speed
+
 bool flag = false;
 
 
@@ -40,3 +42,25 @@ void check_flag(void) {
             }
 }
 
+
+//aux for interrupt related reading functions
+
+void readFrequency()
+{
+        //init timer and run for approx 1 sec, after next interrupt stop and return to speed func 
+}
+
+int readDirection();
+{
+        //activate after 00 pulse in interrupt and return pulse from s1 (can be changed to s2, doesn't really matter)
+         return GPIO_PORTP_BASE;   //1 means forward, 0 means backwards
+}
+
+void dailyDistance()
+{
+        //every time speed() is called, add time * speed
+        x = 1; //x is the approx. time needed for an interrupt
+        //timer init
+
+        dailyDistanceCount += x * speed(readFrequency());
+}
