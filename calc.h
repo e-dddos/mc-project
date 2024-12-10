@@ -1,1 +1,1 @@
-double speed(double, double);
+double speed(double freq);
