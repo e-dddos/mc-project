@@ -1,0 +1,1 @@
+double speed(double, double);
