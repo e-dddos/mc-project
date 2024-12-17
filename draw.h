@@ -46,5 +46,6 @@ void draw_rectangle(int x0, int y0, int x1, int y1, Color color);
 void draw_line(int x0, int y0, int x1, int y1, Color color, int width);
 void draw_line_by_angle(int x1, int y1, int length, int angle_deg, Color color, int width);
 void set_pixel(int x, int y, Color color);
+void write_pixel(Color color);
 
 #endif /* DRAW_H_ */

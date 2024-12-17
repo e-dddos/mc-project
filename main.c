@@ -33,10 +33,10 @@ void main(void)
     i = 0;
     while(1)
     {
-        draw_line_by_angle(200, 250, 100, i % 360, WHITE, 1);
+        draw_line_by_angle(200, 250, 100, i % 360, WHITE, 2);
         //need timer here:
-        for (j=0;j<100000;j++);
-        draw_line_by_angle(200, 250, 100, i % 360, BLUE, 1);
+        for (j=0;j<200000;j++);
+        draw_line_by_angle(200, 250, 100, i % 360, BLUE, 2);
         i++;
     }
     //draw_rectangle();
