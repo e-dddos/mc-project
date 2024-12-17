@@ -95,26 +95,62 @@ void print_string(char* string, int x_pos, int y_pos, Color font_color, Color ba
         i++;
     }
 }
-
-void draw_rectangle(void)
+//x0, y0 is the top left corner, x1, y1 is the bottom right corner
+void draw_rectangle(int x0, int y0, int x1, int y1, Color color)
 {
-    int x = 100;
-    int y = 100;
     int i;
-    Color color;
-    color = WHITE;
-    window_set(x, y, x + 50, y + 20); // set rectangle position see B.4
+    window_set(x0, y0, x1, y1); // set rectangle position see B.4
     write_command(0x2C);              // write pixel command
-    for (i = 0; i < (51 * 21); i++)   // set pixels
+    for (i = 0; i < (((x1-x0)+1) * ((y1-y0)+1)); i++)   // set pixels
     {
-        write_data((color >> 16) & 0xff); // red
-        write_data((color >> 8) & 0xff);  // green
-        write_data((color) & 0xff);       // blue
+        write_pixel(color);
     }
 }
+
+//for tacho:
+void draw_line_by_angle(int x1, int y1, int length, int angle_deg, Color color, int width) {
+    int x0 = x1 - (int)((double)(length) * cos(((double)(angle_deg)/180) * PI));
+    int y0 = y1 - (int)((double)(length) * sin(((double)(angle_deg)/180) * PI));
+    //printf("x0 = %d, y0 = %d, x1 = %d, y1 = %d\n", x0, y0, x1, y1);
+    draw_line(x0, y0, x1, y1, color, width);
+}
+
+
+//draw line with given start and end coordinates of a certain color and width
+
+void draw_line(int x0, int y0, int x1, int y1, Color color, int width) {
+    //Bresenham's algorithm
+    int dx = abs(x1 - x0); // Difference in x
+    int dy = abs(y1 - y0); // Difference in y
+    int sx = (x0 < x1) ? 1 : -1; // Step in x direction
+    int sy = (y0 < y1) ? 1 : -1; // Step in y direction
+    int err = dx - dy; // Error term
+
+    while (1) {
+        draw_rectangle(x0, y0, x0 + width, y0 + width, color); 
+        if (x0 == x1 && y0 == y1) break; // If the end point is reached, break
+        int e2 = 2 * err;
+        if (e2 > -dy) {
+            err -= dy;
+            x0 += sx;
+        }
+        if (e2 < dx) {
+            err += dx;
+            y0 += sy;
+        }
+    }
+}
+
 
 void write_pixel(Color color) {
     write_data((color >> 16) & 0xff); // red
     write_data((color >> 8) & 0xff);  // green
     write_data((color) & 0xff);       // blue
+}
+
+//write single pixel at given coordinates with given color
+void set_pixel(int x, int y, Color color) {
+    window_set(x, y, x, y); // Set the window to the pixel position
+    write_command(0x2C);    // Write pixel command
+    write_pixel(color);     // Write the pixel color
 }

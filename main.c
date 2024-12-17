@@ -11,6 +11,7 @@
 /********************************************************************************/
 void main(void)
 {
+    int i,j;
     sysClock = SysCtlClockFreqSet(   SYSCTL_OSC_INT | SYSCTL_USE_PLL |SYSCTL_CFG_VCO_480,120000000); // Set system frequency to 120 MHz
     init_ports_display(); // Init Port L for Display Control and Port M for Display Data
     // Display initialization
@@ -27,7 +28,17 @@ void main(void)
     
     print_string("Blue screen of death", 50, 50, WHITE, BLUE);
     print_string(":(", 50, 100, WHITE, BLUE);
-    while(1);
+    //draw_line(50, 150, 200, 250, WHITE, 1);
+    //draw_line_by_angle(200, 250, 100, 200, WHITE, 1);
+    i = 0;
+    while(1)
+    {
+        draw_line_by_angle(200, 250, 100, i % 360, WHITE, 1);
+        //need timer here:
+        for (j=0;j<100000;j++);
+        draw_line_by_angle(200, 250, 100, i % 360, BLUE, 1);
+        i++;
+    }
     //draw_rectangle();
 }
 /********************************************************************************/
