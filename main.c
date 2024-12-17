@@ -21,11 +21,13 @@ void main(void)
     configure_display_controller_small();  // initalize and  configuration
 #endif
 
-    set_backgound();
+    set_backgound(BLUE); // set background color
     // Start endless loop
     //draw_rectangles();
     
-    print_string("Hello,_cruel_world!", 50, 50);
+    print_string("Blue screen of death", 50, 50, WHITE, BLUE);
+    print_string(":(", 50, 100, WHITE, BLUE);
+    while(1);
     //draw_rectangle();
 }
 /********************************************************************************/

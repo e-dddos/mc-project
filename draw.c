@@ -7,21 +7,17 @@
 
 #include "draw.h"
 
-void set_backgound(void)
+void set_backgound(Color color)
 {
     printf("Start Background Pixel by Pixel set\n"); // for debug only
-    // set pixel by pixel to change the background colors
-    enum colors color;
+    // set pixel by pixel to change the background Color
     int x, y;
-    color = BLUE;
     window_set(0, 0, MAX_X - 1, MAX_Y - 1); // set single position see B.4  // to do faster ?
     write_command(0x2C);                    // write pixel command
     for (x = 0; x <= (MAX_X)-1; x++)
         for (y = 0; y <= (MAX_Y)-1; y++)
         {
-            write_data((color >> 16) & 0xff); // red
-            write_data((color >> 8) & 0xff);  // green
-            write_data((color) & 0xff);       // blue
+            write_pixel(color);
         }
     printf("Background ready \n"); // for debug only
 }
@@ -29,7 +25,7 @@ void set_backgound(void)
 void draw_rectangles(void)
 {
     int i, j, x, y;
-    enum colors color;
+    Color color;
     color = BLUE;
     j = 0;
     while (1)
@@ -44,24 +40,19 @@ void draw_rectangles(void)
                 write_command(0x2C);              // write pixel command
                 for (i = 0; i < (40 * 40); i++)   // set pixels
                 {
-                    write_data((color >> 16) & 0xff); // red
-                    write_data((color >> 8) & 0xff);  // green
-                    write_data((color) & 0xff);       // blue
+                    write_pixel(color);
                 }
             }
     }
 }
 
-void print_char(char character, int x_pos, int y_pos)
+void print_char(char character, int x_pos, int y_pos, Color font_color, Color background_color)
 {
-    char* bitmap = char_addr[character - 33];
-    char char_width = char_width_array[character - 33];
+    char* bitmap = char_addr[character - 32];
+    char char_width = char_width_array[character - 32];
     int x, y, byte_row;
     int i, j;
     char byte = 0;
-    enum colors font_color, backgroud_color;
-    font_color = WHITE;
-    backgroud_color = BLUE;
     i = 0;
 
     //see https://onmenwhostareongraphs.wordpress.com/2019/10/20/monochrome-bitmap-fonts-in-c-header-files/ for understanding bitmaps
@@ -78,33 +69,29 @@ void print_char(char character, int x_pos, int y_pos)
                 byte = bitmap[i] >> y;
                 if (byte % 2 == 1)
                 {
-                    write_data((font_color >> 16) & 0xff); // red
-                    write_data((font_color >> 8) & 0xff);  // green
-                    write_data((font_color) & 0xff);       // blue
+                    write_pixel(font_color);
                 }
                 else
                 {
-                    write_data((backgroud_color >> 16) & 0xff); // red
-                    write_data((backgroud_color >> 8) & 0xff);  // green
-                    write_data((backgroud_color) & 0xff);       // blue
+                    write_pixel(background_color);
                 }
             }
         }
     }
 }
 
-void print_string(char* string, int x_pos, int y_pos)
+void print_string(char* string, int x_pos, int y_pos, Color font_color, Color background_color)
 {
     int i = 0;
     int x_current = x_pos;
     int y_current = y_pos;
     while (string[i] != '\0')
     {
-        printf("character = %c\n", string[i]);
-        printf("char_width_array[string[i] - 33] = %d\n", char_width_array[string[i] - 33]);
-        printf("x_current = %d\n", x_current);
-        print_char(string[i], x_current, y_current);
-        x_current = x_current + char_width_array[string[i] - 33] + 7;
+        //printf("character = %c\n", string[i]);
+        //printf("char_width_array[string[i] - 32] = %d\n", char_width_array[string[i] - 32]);
+        //printf("x_current = %d\n", x_current);
+        print_char(string[i], x_current, y_current, font_color, background_color);
+        x_current = x_current + char_width_array[string[i] - 32] + 7;
         i++;
     }
 }
@@ -114,7 +101,7 @@ void draw_rectangle(void)
     int x = 100;
     int y = 100;
     int i;
-    enum colors color;
+    Color color;
     color = WHITE;
     window_set(x, y, x + 50, y + 20); // set rectangle position see B.4
     write_command(0x2C);              // write pixel command
@@ -124,4 +111,10 @@ void draw_rectangle(void)
         write_data((color >> 8) & 0xff);  // green
         write_data((color) & 0xff);       // blue
     }
+}
+
+void write_pixel(Color color) {
+    write_data((color >> 16) & 0xff); // red
+    write_data((color >> 8) & 0xff);  // green
+    write_data((color) & 0xff);       // blue
 }
