@@ -10,7 +10,7 @@
 #include "calc.h" //local calc of speed
 
 bool flag = false;
-
+uint16_t curr_spin_count, temp_spin_count  = 0;
 
 void configure_gpios(void){
         // Set Port P Pins 0,1: 0 - S1, 1 - S2
@@ -29,19 +29,55 @@ void configure_gpios(void){
 }
 
 
+
 void isr_s1(void) {
-    flag = true;
+    curr_spin_count++;
     GPIOIntClear(GPIO_PORTP_BASE,GPIO_PIN_0);
 }
 
 
 void check_flag(void) {
+    uint16_t temp_spin_count = 0;
+
     if (flag) {
-                printf("Interrupt!\n");
+                temp_spin_count = curr_spin_count;
+                printf("Interrupt from timer! spin_count=%d\n", temp_spin_count);
+                curr_spin_count = 0;
                 flag = false;
             }
 }
 
+void timer0A_init(uint32_t milliseconds, uint32_t sysClock) {
+    // Enable Timer0 peripheral
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0);
+    // Wait for the Timer0 module to be ready
+    while (!SysCtlPeripheralReady(SYSCTL_PERIPH_TIMER0)) {}
+    // Configure Timer0 as a 32-bit periodic timer
+    TimerConfigure(TIMER0_BASE, TIMER_CFG_PERIODIC);
+    // Calculate load value for the specified milliseconds
+    uint32_t loadValue = (sysClock / 1000) * milliseconds - 1;
+    // Set the timer load value
+    TimerLoadSet(TIMER0_BASE, TIMER_A, loadValue);
+    // Register the interrupt handler
+    TimerIntRegister(TIMER0_BASE, TIMER_A, timer0A_isr);
+    // Enable Timer0A timeout interrupt
+    TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
+    // Enable Timer0A interrupt in the NVIC
+    IntEnable(INT_TIMER0A);
+    // Enable global interrupts
+    //IntMasterEnable();
+    // Enable Timer0A
+    TimerEnable(TIMER0_BASE, TIMER_A);
+}
+
+// Interrupt Service Routine for Timer0A
+void timer0A_isr(void) {
+    // Clear the timer interrupt
+    TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
+    flag = true;
+    // Your logic here: what to do when the timer expires
+    // For example, toggle an LED or set a flag
+}
 
 //aux for interrupt related reading functions
 
@@ -50,17 +86,17 @@ void readFrequency()
         //init timer and run for approx 1 sec, after next interrupt stop and return to speed func 
 }
 
-int readDirection();
+int readDirection()
 {
         //activate after 00 pulse in interrupt and return pulse from s1 (can be changed to s2, doesn't really matter)
-         return GPIO_PORTP_BASE;   //1 means forward, 0 means backwards
+         //return GPIO_PORTP_BASE;   //1 means forward, 0 means backwards
 }
 
 void dailyDistance()
 {
         //every time speed() is called, add time * speed
-        x = 1; //x is the approx. time needed for an interrupt
+        //x = 1; //x is the approx. time needed for an interrupt
         //timer init
 
-        dailyDistanceCount += x * speed(readFrequency());
+        //dailyDistanceCount += x * speed(readFrequency());
 }
