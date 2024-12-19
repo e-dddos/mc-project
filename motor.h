@@ -23,6 +23,7 @@
 //For timer:
 #include "driverlib/timer.h"
 
+#include "draw.h"
 
 
 void configure_gpios(void);

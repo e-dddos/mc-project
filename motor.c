@@ -6,12 +6,11 @@
  */
 
 #include "motor.h"
-
 #include "calc.h" //local calc of speed
 
 bool flag = false;
 uint16_t curr_spin_count, temp_spin_count  = 0;
-
+uint8_t dir = 0; //0 - vorw, 1 - rueckw
 void configure_gpios(void){
         // Set Port P Pins 0,1: 0 - S1, 1 - S2
         SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOP);            // enable clock-gate Port P
@@ -31,19 +30,27 @@ void configure_gpios(void){
 
 
 void isr_s1(void) {
-    curr_spin_count++;
     GPIOIntClear(GPIO_PORTP_BASE,GPIO_PIN_0);
+    curr_spin_count++;
+    dir = GPIOPinRead(GPIO_PORTP_BASE, GPIO_PIN_1) & GPIO_PIN_1;
 }
 
 
 void check_flag(void) {
-    uint16_t temp_spin_count = 0;
 
     if (flag) {
+                draw_line_by_angle(500, 400, 200, temp_spin_count*5*180/450, BLUE, 3);
                 temp_spin_count = curr_spin_count;
-                printf("Interrupt from timer! spin_count=%d\n", temp_spin_count);
+                //printf("spin_count=%d\n", temp_spin_count);
+                //printf("dir=%d\n", dir);
                 curr_spin_count = 0;
+                draw_line_by_angle(500, 400, 200, temp_spin_count*5*180/450, WHITE, 3);
                 flag = false;
+                if (dir) {
+                    print_char('R',500, 50, WHITE, BLUE);
+                } else {
+                    print_char('V',500, 50, WHITE, BLUE);
+                }
             }
 }
 

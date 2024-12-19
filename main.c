@@ -6,13 +6,11 @@
 // V0.1-V0.4 K.R. Riemschneider .. 1-4 Oct 2020
 
 
-#include "draw.h"
 #include "motor.h"
 
 /********************************************************************************/
 void main(void)
 {
-    int i,j;
     sysClock = SysCtlClockFreqSet(   SYSCTL_OSC_INT | SYSCTL_USE_PLL |SYSCTL_CFG_VCO_480,120000000); // Set system frequency to 120 MHz
     printf("sysClock = %d\n", sysClock);
     init_ports_display(); // Init Port L for Display Control and Port M for Display Data
@@ -23,28 +21,11 @@ void main(void)
 #ifdef SMALL DISPLAY
     configure_display_controller_small();  // initalize and  configuration
 #endif
-
-    set_backgound(BLUE); // set background color
-    // Start endless loop
-    ////draw_rectangles();
-    
-    print_string("Blue screen of death", 50, 50, WHITE, BLUE);
-    print_string(":(", 50, 100, WHITE, BLUE);
-    //draw_line(50, 150, 200, 250, WHITE, 1);
-    //draw_line_by_angle(200, 250, 100, 200, WHITE, 1);
-    i = 0;
-    while(1)
-    {
-        draw_line_by_angle(200, 250, 100, i % 360, WHITE, 2);
-        //need timer here:
-        for (j=0;j<200000;j++);
-        draw_line_by_angle(200, 250, 100, i % 360, BLUE, 2);
-        i++;
-    }
-    //draw_rectangle();
-
     configure_gpios();
-    timer0A_init(1000, sysClock);
+    set_backgound(BLUE); // set background color
+    print_string("Tachometer", 50, 50, WHITE, BLUE);
+    timer0A_init(200, sysClock);
+
     while(1) {
         check_flag();
     }

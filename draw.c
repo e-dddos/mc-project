@@ -22,28 +22,6 @@ void set_backgound(Color color)
     printf("Background ready \n"); // for debug only
 }
 
-void draw_rectangles(void) {
-    int i,j,x,y;
-    enum colors color;
-    color = RED;
-    j=0;
-    // Start endless loop
-    while (1) {
-        //printf("Write rectangles\n"); // for debug only
-        for (x=0;x<=(MAX_X)-1-20;x=x+40)
-            for (y=0;y<=(MAX_Y)-1-20;y=y+40)
-            {
-                color = colorarray[(j) % 7];
-                j++;                              // change color
-                window_set(x, y, x + 20, y + 20); // set rectangle position see B.4
-                write_command(0x2C);              // write pixel command
-                for (i = 0; i < (40 * 40); i++)   // set pixels
-                {
-                    write_pixel(color);
-                }
-            }
-    }
-}
 
 void print_char(char character, int x_pos, int y_pos, Color font_color, Color background_color)
 {

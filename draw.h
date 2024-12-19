@@ -39,7 +39,6 @@ static int colorarray[]={BLACK,WHITE,GREY,RED,GREEN,BLUE,YELLOW};
 //static const char char_width = 24;
 
 void set_backgound(Color color);
-void draw_rectangles(void);
 void print_char(char character, int x_pos, int y_pos, Color font_color, Color background_color);
 void print_string(char* string, int x_pos, int y_pos, Color font_color, Color background_color);
 void draw_rectangle(int x0, int y0, int x1, int y1, Color color);
