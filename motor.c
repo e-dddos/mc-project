@@ -11,6 +11,7 @@
 bool flag = false;
 uint16_t curr_spin_count, temp_spin_count  = 0;
 uint8_t dir = 0; //0 - vorw, 1 - rueckw
+uint8_t dir_save = 1;
 void configure_gpios(void){
         // Set Port P Pins 0,1: 0 - S1, 1 - S2
         SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOP);            // enable clock-gate Port P
@@ -32,24 +33,27 @@ void configure_gpios(void){
 void isr_s1(void) {
     GPIOIntClear(GPIO_PORTP_BASE,GPIO_PIN_0);
     curr_spin_count++;
-    dir = GPIOPinRead(GPIO_PORTP_BASE, GPIO_PIN_1) & GPIO_PIN_1;
+    dir = (GPIOPinRead(GPIO_PORTP_BASE, GPIO_PIN_1) & GPIO_PIN_1) >> 1;
 }
 
 
 void check_flag(void) {
 
     if (flag) {
-                draw_line_by_angle(500, 400, 200, temp_spin_count*5*180/450, BLUE, 3);
+                draw_line_by_angle(TACHO_CENTER_X, TACHO_CENTER_Y, 200, temp_spin_count*5*180/480, BACKGROUND_COLOR, 3, false);
                 temp_spin_count = curr_spin_count;
-                //printf("spin_count=%d\n", temp_spin_count);
-                //printf("dir=%d\n", dir);
                 curr_spin_count = 0;
-                draw_line_by_angle(500, 400, 200, temp_spin_count*5*180/450, WHITE, 3);
+                draw_line_by_angle(TACHO_CENTER_X, TACHO_CENTER_Y, 200, temp_spin_count*5*180/480, WHITE, 3, false);
                 flag = false;
-                if (dir) {
-                    print_char('R',500, 50, WHITE, BLUE);
-                } else {
-                    print_char('V',500, 50, WHITE, BLUE);
+                //Only update direction if it has changed
+                if (dir != dir_save) {
+                    dir_save = dir;             
+                    if (dir) {
+                        draw_rectangle(500, 50, 550, 80, BACKGROUND_COLOR);
+                        print_char('R',500, 50, WHITE, BACKGROUND_COLOR);
+                    } else {
+                        print_char('V',500, 50, WHITE, BACKGROUND_COLOR);
+                    }
                 }
             }
 }
@@ -82,8 +86,6 @@ void timer0A_isr(void) {
     // Clear the timer interrupt
     TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
     flag = true;
-    // Your logic here: what to do when the timer expires
-    // For example, toggle an LED or set a flag
 }
 
 //aux for interrupt related reading functions

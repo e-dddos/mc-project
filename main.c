@@ -22,10 +22,10 @@ void main(void)
     configure_display_controller_small();  // initalize and  configuration
 #endif
     configure_gpios();
-    set_backgound(BLUE); // set background color
-    print_string("Tachometer", 50, 50, WHITE, BLUE);
+    set_backgound(BACKGROUND_COLOR); // set background color
+    print_string("Tachometer", 50, 50, WHITE, BACKGROUND_COLOR);
     timer0A_init(200, sysClock);
-
+    draw_tacho();
     while(1) {
         check_flag();
     }

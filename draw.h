@@ -28,23 +28,25 @@
 
 #define FONT_SIZE 32
 #define PI 3.14159265
+#define TACHO_CENTER_X MAX_X/2
+#define TACHO_CENTER_Y 450
+#define TACHO_NUM_SEGMENTS 10
+#define BACKGROUND_COLOR DARK_BLUE
+#define MAX_SPEED 400
+
 /* some predefined basic colors to use with names */
 typedef enum {BLACK=0x00000000,WHITE=0x00FFFFFF,
 GREY=0x00AAAAAA,RED=0x00FF0000,GREEN=0x0000FF00,
-BLUE=0x000000FF,YELLOW=0x00FFFF00, LOL=0x00AAFFAA} Color;
-/* same values as array for indexed colors */
-static int colorarray[]={BLACK,WHITE,GREY,RED,GREEN,BLUE,YELLOW};
+BLUE=0x000000FF,YELLOW=0x00FFFF00, LOL=0x00AAFFAA,
+DARK_BLUE = 0x00000044} Color;
 
-//static const char bitmap_72[] = {0,0,0,248,248,248,0,0,0,0,0,0,0,0,0,0,0,0,0,248,248,248,0,0,0,0,0,255,255,255,96,96,96,96,96,96,96,96,96,96,96,96,96,255,255,255,0,0,0,0,0,255,255,255,0,0,0,0,0,0,0,0,0,0,0,0,0,255,255,255,0,0,0,0,0,7,7,7,0,0,0,0,0,0,0,0,0,0,0,0,0,7,7,7,0,0};
-//static const char char_width = 24;
-
+void set_pixel(int x, int y, Color color);
+void write_pixel(Color color);
 void set_backgound(Color color);
 void print_char(char character, int x_pos, int y_pos, Color font_color, Color background_color);
 void print_string(char* string, int x_pos, int y_pos, Color font_color, Color background_color);
 void draw_rectangle(int x0, int y0, int x1, int y1, Color color);
 void draw_line(int x0, int y0, int x1, int y1, Color color, int width);
-void draw_line_by_angle(int x1, int y1, int length, int angle_deg, Color color, int width);
-void set_pixel(int x, int y, Color color);
-void write_pixel(Color color);
-
+void draw_line_by_angle(int x1, int y1, int length, int angle_deg, Color color, int width, bool tacho);
+void draw_tacho(void);
 #endif /* DRAW_H_ */

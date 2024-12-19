@@ -7,6 +7,19 @@
 
 #include "draw.h"
 
+void write_pixel(Color color) {
+    write_data((color >> 16) & 0xff); // red
+    write_data((color >> 8) & 0xff);  // green
+    write_data((color) & 0xff);       // blue
+}
+
+//write single pixel at given coordinates with given color
+void set_pixel(int x, int y, Color color) {
+    window_set(x, y, x, y); // Set the window to the pixel position
+    write_command(0x2C);    // Write pixel command
+    write_pixel(color);     // Write the pixel color
+}
+
 void set_backgound(Color color)
 {
     printf("Start Background Pixel by Pixel set\n"); // for debug only
@@ -21,7 +34,6 @@ void set_backgound(Color color)
         }
     printf("Background ready \n"); // for debug only
 }
-
 
 void print_char(char character, int x_pos, int y_pos, Color font_color, Color background_color)
 {
@@ -64,9 +76,6 @@ void print_string(char* string, int x_pos, int y_pos, Color font_color, Color ba
     int y_current = y_pos;
     while (string[i] != '\0')
     {
-        //printf("character = %c\n", string[i]);
-        //printf("char_width_array[string[i] - 32] = %d\n", char_width_array[string[i] - 32]);
-        //printf("x_current = %d\n", x_current);
         print_char(string[i], x_current, y_current, font_color, background_color);
         x_current = x_current + char_width_array[string[i] - 32] + 7;
         i++;
@@ -85,16 +94,23 @@ void draw_rectangle(int x0, int y0, int x1, int y1, Color color)
 }
 
 //for tacho:
-void draw_line_by_angle(int x1, int y1, int length, int angle_deg, Color color, int width) {
+void draw_line_by_angle(int x1, int y1, int length, int angle_deg, Color color, int width, bool tacho) {
     int x0 = x1 - (int)((double)(length) * cos(((double)(angle_deg)/180) * PI));
     int y0 = y1 - (int)((double)(length) * sin(((double)(angle_deg)/180) * PI));
     //printf("x0 = %d, y0 = %d, x1 = %d, y1 = %d\n", x0, y0, x1, y1);
     draw_line(x0, y0, x1, y1, color, width);
+    //for determining where to plave the numbers on the segments and print them:
+    if (tacho) {
+        int speed = (angle_deg * MAX_SPEED) / 180;
+        char speed_str[4];
+        sprintf(speed_str, "%d", speed);
+        x0 = x1 - (int)((double)(length + 30) * cos(((double)(angle_deg)/180) * PI));
+        y0 = y1 - (int)((double)(length + 30) * sin(((double)(angle_deg)/180) * PI));
+        print_string(speed_str, x0, y0, WHITE, BACKGROUND_COLOR);
+    }   
 }
 
-
 //draw line with given start and end coordinates of a certain color and width
-
 void draw_line(int x0, int y0, int x1, int y1, Color color, int width) {
     //Bresenham's algorithm
     int dx = abs(x1 - x0); // Difference in x
@@ -118,16 +134,19 @@ void draw_line(int x0, int y0, int x1, int y1, Color color, int width) {
     }
 }
 
-
-void write_pixel(Color color) {
-    write_data((color >> 16) & 0xff); // red
-    write_data((color >> 8) & 0xff);  // green
-    write_data((color) & 0xff);       // blue
-}
-
-//write single pixel at given coordinates with given color
-void set_pixel(int x, int y, Color color) {
-    window_set(x, y, x, y); // Set the window to the pixel position
-    write_command(0x2C);    // Write pixel command
-    write_pixel(color);     // Write the pixel color
+void draw_tacho(void) {
+    int i = 0;
+    for (i = 0; i <= 180; i += 180/TACHO_NUM_SEGMENTS) {
+        //Draw segments:
+        //Last three segments are red:
+        if (i >= 144) {
+            draw_line_by_angle(TACHO_CENTER_X, TACHO_CENTER_Y, 300, i, RED, 3, true);
+        } else {
+            draw_line_by_angle(TACHO_CENTER_X, TACHO_CENTER_Y, 300, i, GREY, 3, true);
+        }
+        //Remove the inner parts of the segments:
+        draw_line_by_angle(TACHO_CENTER_X, TACHO_CENTER_Y, 250, i-1, BACKGROUND_COLOR, 3, false);
+        draw_line_by_angle(TACHO_CENTER_X, TACHO_CENTER_Y, 250, i, BACKGROUND_COLOR, 3, false);
+        draw_line_by_angle(TACHO_CENTER_X, TACHO_CENTER_Y, 250, i+1, BACKGROUND_COLOR, 3, false);
+    }
 }
