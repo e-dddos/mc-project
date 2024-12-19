@@ -22,17 +22,16 @@ void set_backgound(Color color)
     printf("Background ready \n"); // for debug only
 }
 
-void draw_rectangles(void)
-{
-    int i, j, x, y;
-    Color color;
-    color = BLUE;
-    j = 0;
-    while (1)
-    {
-        printf("Write rectangles\n"); // for debug only
-        for (x = 0; x <= (MAX_X)-1 - 20; x = x + 40)
-            for (y = 0; y <= (MAX_Y)-1 - 20; y = y + 40)
+void draw_rectangles(void) {
+    int i,j,x,y;
+    enum colors color;
+    color = RED;
+    j=0;
+    // Start endless loop
+    while (1) {
+        //printf("Write rectangles\n"); // for debug only
+        for (x=0;x<=(MAX_X)-1-20;x=x+40)
+            for (y=0;y<=(MAX_Y)-1-20;y=y+40)
             {
                 color = colorarray[(j) % 7];
                 j++;                              // change color

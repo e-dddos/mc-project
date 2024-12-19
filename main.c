@@ -7,12 +7,14 @@
 
 
 #include "draw.h"
+#include "motor.h"
 
 /********************************************************************************/
 void main(void)
 {
     int i,j;
     sysClock = SysCtlClockFreqSet(   SYSCTL_OSC_INT | SYSCTL_USE_PLL |SYSCTL_CFG_VCO_480,120000000); // Set system frequency to 120 MHz
+    printf("sysClock = %d\n", sysClock);
     init_ports_display(); // Init Port L for Display Control and Port M for Display Data
     // Display initialization
 #ifdef LARGE_DISPLAY
@@ -24,7 +26,7 @@ void main(void)
 
     set_backgound(BLUE); // set background color
     // Start endless loop
-    //draw_rectangles();
+    ////draw_rectangles();
     
     print_string("Blue screen of death", 50, 50, WHITE, BLUE);
     print_string(":(", 50, 100, WHITE, BLUE);
@@ -40,5 +42,11 @@ void main(void)
         i++;
     }
     //draw_rectangle();
+
+    configure_gpios();
+    timer0A_init(1000, sysClock);
+    while(1) {
+        check_flag();
+    }
 }
 /********************************************************************************/
