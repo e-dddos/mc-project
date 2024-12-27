@@ -10,8 +10,8 @@
 
 #include <math.h>
 #include "display_config.h"
-#include "ubuntu_bitmap_32.h"
-#include "ubuntu_bitmap_64.h"
+#include "bitmaps/ubuntu_bitmap_32.h"
+#include "bitmaps/ubuntu_bitmap_64.h"
 
 // Size of Display define
 #define LARGE_DISPLAY
