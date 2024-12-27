@@ -56,20 +56,16 @@ void isr_s1(void) {
 void run_tacho(void) {
 
     if (timer_flag) {
-                draw_line_by_angle(TACHO_CENTER_X, TACHO_CENTER_Y, 200, temp_spin_count*5*180/500, BACKGROUND_COLOR, 3, false);
+                draw_line_by_angle(TACHO_CENTER_X, TACHO_CENTER_Y, 220, temp_spin_count*5*180/500, BACKGROUND_COLOR, 1, false);
                 temp_spin_count = curr_spin_count;
                 curr_spin_count = 0;
-                draw_line_by_angle(TACHO_CENTER_X, TACHO_CENTER_Y, 200, temp_spin_count*5*180/500, WHITE, 3, false);
+                draw_line_by_angle(TACHO_CENTER_X, TACHO_CENTER_Y, 220, temp_spin_count*5*180/500, RED, 1, false);
                 timer_flag = false;
                 //Only update direction if it has changed
                 if (dir != dir_save) {
-                    dir_save = dir;             
-                    if (dir) {
-                        draw_rectangle(500, 50, 550, 80, BACKGROUND_COLOR);
-                        print_char('R',500, 50, WHITE, BACKGROUND_COLOR, FONT_SIZE_BIG);
-                    } else {
-                        print_char('V',500, 50, WHITE, BACKGROUND_COLOR, FONT_SIZE_BIG);
-                    }
+                    dir_save = dir;
+                    draw_rectangle(700, 100, 750, 130, BACKGROUND_COLOR); //to remove the rest of 'V' after changing to 'R'
+                    print_char('V'-4*dir,700, 100, GREEN, BACKGROUND_COLOR, FONT_SIZE_BIG); //'V' - 4*1 = 'R'. if dir = 1, 'R' will be printed
                 }
             }
 }
@@ -102,26 +98,4 @@ void timer0A_isr(void) {
     // Clear the timer interrupt
     TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
     timer_flag = true;
-}
-
-//aux for interrupt related reading functions
-
-void readFrequency()
-{
-        //init timer and run for approx 1 sec, after next interrupt stop and return to speed func 
-}
-
-int readDirection()
-{
-        //activate after 00 pulse in interrupt and return pulse from s1 (can be changed to s2, doesn't really matter)
-         //return GPIO_PORTP_BASE;   //1 means forward, 0 means backwards
-}
-
-void dailyDistance()
-{
-        //every time speed() is called, add time * speed
-        //x = 1; //x is the approx. time needed for an interrupt
-        //timer init
-
-        //dailyDistanceCount += x * speed(readFrequency());
 }

@@ -38,7 +38,7 @@ void set_backgound(Color color)
 void print_char(char character, int x_pos, int y_pos, Color font_color, Color background_color, int font_size)
 {
     int x, y, byte_row;
-    int i, j;
+    int i;
     char byte = 0;
     i = 0;
     char* bitmap;
@@ -65,7 +65,7 @@ void print_char(char character, int x_pos, int y_pos, Color font_color, Color ba
             for (x = 0; x < char_width; x++)
             {
                 i = x + byte_row * char_width;
-                byte = bitmap[i] >> y;              
+                byte = bitmap[i] >> y; //shift to the next bit
                 if (byte % 2 == 1) //check if the bit is set
                 {
                     write_pixel(font_color);
@@ -84,14 +84,14 @@ void print_string(char* string, int x_pos, int y_pos, Color font_color, Color ba
     int i = 0;
     int x_current = x_pos;
     int y_current = y_pos;
-    while (string[i] != '\0')
+    while (string[i] != '\0') //loop until the end of the string
     {
         print_char(string[i], x_current, y_current, font_color, background_color, font_size);
-        if (font_size == FONT_SIZE_SMALL) {
-            x_current = x_current + char_width_array[string[i] - 32] + 7;
+        if (font_size == FONT_SIZE_SMALL) { 
+            x_current = x_current + char_width_array[string[i] - 32] + 7; //start of the next character is the end of the current character + 7
         }
         else { //font_size == FONT_SIZE_BIG
-            x_current = x_current + big_char_width_array[string[i] - 32] + 10;
+            x_current = x_current + big_char_width_array[string[i] - 32] + 10; //same as above, but +10
         }
         i++;
     }
@@ -108,13 +108,18 @@ void draw_rectangle(int x0, int y0, int x1, int y1, Color color)
     }
 }
 
-//for tacho:
+/*for tacho: calculates the end coordinates of a line with a given length and angle in degrees and draws it
+if tacho is true, it also prints the speed numbers on the segments, because
+When placing the segment lines, we have the information of where the segment line ends, it is stored in x0,y0
+This is exactly the position where we want to place our speed numbers on. This way, giving the function tacho=true
+as an argument, we can use this information and place the numbers there. This way we can have a variable 
+number of segments and not hardcode the numbers' position*/
 void draw_line_by_angle(int x1, int y1, int length, int angle_deg, Color color, int width, bool tacho) {
     int x0 = x1 - (int)((double)(length) * cos(((double)(angle_deg)/180) * PI));
     int y0 = y1 - (int)((double)(length) * sin(((double)(angle_deg)/180) * PI));
     //printf("x0 = %d, y0 = %d, x1 = %d, y1 = %d\n", x0, y0, x1, y1);
     draw_line(x0, y0, x1, y1, color, width);
-    //for determining where to plave the numbers on the segments and print them:
+    //for determining where to place the numbers on the segments and print them:
     if (tacho) {
         int speed = (angle_deg * MAX_SPEED) / 180;
         char speed_str[4];
@@ -152,11 +157,10 @@ void draw_line(int x0, int y0, int x1, int y1, Color color, int width) {
 void draw_tacho(void) {
     int i = 0;
     for (i = 0; i <= 180; i += 180/TACHO_NUM_SEGMENTS) {
-        //Draw segments:
-        //Last three segments are red:
-        if (i >= 144) {
+        //Draw segments:      
+        if (i >= 144) { //Last three segments are red:
             draw_line_by_angle(TACHO_CENTER_X, TACHO_CENTER_Y, 300, i, RED, 3, true);
-        } else {
+        } else { //Others are grey:
             draw_line_by_angle(TACHO_CENTER_X, TACHO_CENTER_Y, 300, i, GREY, 3, true);
         }
         //Remove the inner parts of the segments:

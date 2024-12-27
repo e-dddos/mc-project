@@ -21,11 +21,11 @@
 #ifdef LARGE_DISPLAY
     #define MAX_X 800
     #define MAX_Y 480
-    #endif
+#endif
     #ifdef SMALL DISPLAY
     #define MAX_X 480
     #define MAX_Y 272
-    #endif
+#endif
 
 #define FONT_SIZE_SMALL 32
 #define FONT_SIZE_BIG 64
