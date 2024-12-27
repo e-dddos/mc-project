@@ -5,8 +5,8 @@
  *      Author: edward
  */
 
-#ifndef SRC_MOTOR_H_
-#define SRC_MOTOR_H_
+#ifndef SRC_TACHO_H_
+#define SRC_TACHO_H_
 
 #include "inc/tm4c1294ncpdt.h" // Macros fpr Registers and Bitfields
 #include "inc/hw_memmap.h" //  Tivaware Macros ...BASE as base address for peripheral modules
@@ -25,14 +25,13 @@
 
 #include "draw.h"
 
-
+void system_init(void);
 void configure_gpios(void);
 void timer0A_init(uint32_t milliseconds, uint32_t sysClock);
 void timer0A_isr(void);
 
-//void configure_timer(void);
-void check_flag(void);
+void run_tacho(void);
 
 void isr_s1(void);
 
-#endif /* SRC_MOTOR_H_ */
+#endif /* SRC_TACHO_H_ */

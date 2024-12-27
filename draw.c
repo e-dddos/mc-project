@@ -35,18 +35,28 @@ void set_backgound(Color color)
     printf("Background ready \n"); // for debug only
 }
 
-void print_char(char character, int x_pos, int y_pos, Color font_color, Color background_color)
+void print_char(char character, int x_pos, int y_pos, Color font_color, Color background_color, int font_size)
 {
-    char* bitmap = char_addr[character - 32];
-    char char_width = char_width_array[character - 32];
     int x, y, byte_row;
     int i, j;
     char byte = 0;
     i = 0;
-
+    char* bitmap;
+    char char_width;
+    //We will use two font sizes, 32 and 64
+    if (font_size == FONT_SIZE_SMALL)
+    {
+        bitmap = char_addr[character - 32];
+        char_width = char_width_array[character - 32];
+    }
+    else //font_size == FONT_SIZE_BIG
+    {
+        bitmap = big_char_addr[character - 32];
+        char_width = big_char_width_array[character - 32];
+    }
     //see https://onmenwhostareongraphs.wordpress.com/2019/10/20/monochrome-bitmap-fonts-in-c-header-files/ for understanding bitmaps
     
-    for (byte_row = 0; byte_row < FONT_SIZE / 8; byte_row++)
+    for (byte_row = 0; byte_row < font_size / 8; byte_row++)
     {
         window_set(x_pos, y_pos + byte_row * 8, x_pos + char_width - 1, (y_pos + byte_row * 8) + 7); // set rectangle position see B.4
         write_command(0x2C);                                                                                 // write pixel command
@@ -69,15 +79,20 @@ void print_char(char character, int x_pos, int y_pos, Color font_color, Color ba
     }
 }
 
-void print_string(char* string, int x_pos, int y_pos, Color font_color, Color background_color)
+void print_string(char* string, int x_pos, int y_pos, Color font_color, Color background_color, int font_size)
 {
     int i = 0;
     int x_current = x_pos;
     int y_current = y_pos;
     while (string[i] != '\0')
     {
-        print_char(string[i], x_current, y_current, font_color, background_color);
-        x_current = x_current + char_width_array[string[i] - 32] + 7;
+        print_char(string[i], x_current, y_current, font_color, background_color, font_size);
+        if (font_size == FONT_SIZE_SMALL) {
+            x_current = x_current + char_width_array[string[i] - 32] + 7;
+        }
+        else { //font_size == FONT_SIZE_BIG
+            x_current = x_current + big_char_width_array[string[i] - 32] + 10;
+        }
         i++;
     }
 }
@@ -106,7 +121,7 @@ void draw_line_by_angle(int x1, int y1, int length, int angle_deg, Color color, 
         sprintf(speed_str, "%d", speed);
         x0 = x1 - (int)((double)(length + 30) * cos(((double)(angle_deg)/180) * PI));
         y0 = y1 - (int)((double)(length + 30) * sin(((double)(angle_deg)/180) * PI));
-        print_string(speed_str, x0, y0, WHITE, BACKGROUND_COLOR);
+        print_string(speed_str, x0, y0, WHITE, BACKGROUND_COLOR, 32);
     }   
 }
 
