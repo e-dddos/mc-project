@@ -39,7 +39,8 @@
 /* some predefined basic colors to use with names */
 typedef enum {BLACK=0x00000000,WHITE=0x00FFFFFF,
 GREY=0x00AAAAAA,RED=0x00FF0000,GREEN=0x0000FF00,
-BLUE=0x000000FF,YELLOW=0x00FFFF00, DARK_BLUE = 0x00000044} Color;
+BLUE=0x000000FF,YELLOW=0x00FFFF00, DARK_BLUE = 0x00000022,
+LIGHT_BLUE = 0x009999FF, ORANGE = 0x00FF8800, PURPLE = 0x00AA00FF} Color;  
 
 void set_pixel(int x, int y, Color color);
 void write_pixel(Color color);
@@ -50,4 +51,5 @@ void draw_rectangle(int x0, int y0, int x1, int y1, Color color);
 void draw_line(int x0, int y0, int x1, int y1, Color color, int width);
 void draw_line_by_angle(int x1, int y1, int length, int angle_deg, Color color, int width, bool tacho);
 void draw_tacho(void);
+void draw_haw_logo(void);
 #endif /* DRAW_H_ */

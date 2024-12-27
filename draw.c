@@ -169,3 +169,22 @@ void draw_tacho(void) {
         draw_line_by_angle(TACHO_CENTER_X, TACHO_CENTER_Y, 250, i+1, BACKGROUND_COLOR, 3, false);
     }
 }
+
+void draw_haw_logo(void) {
+    int x0 = 200;
+    int y0 = 170;
+    int i = 0;
+    int line_length = 100;
+    int line_width = 6;
+    int space = 30;
+    set_backgound(WHITE);
+    for (i = 0; i < 4; i++) {
+        draw_line(x0, y0 +i*space, x0 + line_length, y0 +i*space, LIGHT_BLUE, line_width);
+    }
+    for (i = 0; i < 4; i++) {
+        draw_line(x0 + line_length/3, y0 + line_width + 10 +i*space, x0 + line_length/3 + line_length, y0 + line_width + 10 +i*space, DARK_BLUE, line_width);
+    }
+    print_string("HAW", x0+150, y0, DARK_BLUE, WHITE, 64);
+    print_string("HAMBURG", x0+150, y0+80, DARK_BLUE, WHITE, 64);
+    print_string("Loading...", x0+150, y0+200, BLACK, WHITE, 32);
+}

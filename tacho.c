@@ -16,6 +16,7 @@ uint8_t dir_save = 1;
 
 
 void system_init(void) {
+    int i = 0;
     sysClock = SysCtlClockFreqSet(   SYSCTL_OSC_INT | SYSCTL_USE_PLL |SYSCTL_CFG_VCO_480,120000000); // Set system frequency to 120 MHz
     init_ports_display(); // Init Port L for Display Control and Port M for Display Data
     // Display initialization
@@ -26,9 +27,16 @@ void system_init(void) {
         configure_display_controller_small();  // initalize and  configuration
     #endif
     configure_gpios();
+    timer0A_init(200, sysClock); //set timer to send interrupt every 200ms
+    draw_haw_logo();
+    while (i < 20) { //wait for 4 seconds
+        if (timer_flag) {
+            i++;
+            timer_flag = false;
+        }
+    }
     set_backgound(BACKGROUND_COLOR); // set background color
     print_string("Tachometer", 50, 50, WHITE, BACKGROUND_COLOR, FONT_SIZE_SMALL);
-    timer0A_init(200, sysClock); //set timer to send interrupt every 200ms
     draw_tacho();
 }
 //configure GPIO as Inputs and define ISR for S1
