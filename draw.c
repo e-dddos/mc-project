@@ -171,12 +171,15 @@ void draw_tacho(void) {
 }
 
 void draw_haw_logo(void) {
+    //Constants for HAW logo:
     int x0 = 200;
     int y0 = 170;
-    int i = 0;
     int line_length = 100;
     int line_width = 6;
     int space = 30;
+
+    int i = 0;
+    int j = 0;
     set_backgound(WHITE);
     for (i = 0; i < 4; i++) {
         draw_line(x0, y0 +i*space, x0 + line_length, y0 +i*space, LIGHT_BLUE, line_width);
@@ -186,5 +189,11 @@ void draw_haw_logo(void) {
     }
     print_string("HAW", x0+150, y0, DARK_BLUE, WHITE, 64);
     print_string("HAMBURG", x0+150, y0+80, DARK_BLUE, WHITE, 64);
-    print_string("Loading...", x0+150, y0+200, BLACK, WHITE, 32);
+    print_string("Loading", x0+150, y0+200, BLACK, WHITE, 32);
+    space = char_width_array['L'-32] + char_width_array['o'-32] + char_width_array['a'-32] + char_width_array['d'-32] + char_width_array['i'-32] + char_width_array['n'-32] + char_width_array['g'-32] + 7*7;
+    //Fancy loading dots:
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 5000000; j++) {} //delay
+        print_char('.', x0+150+space+i*(char_width_array['.'-32]+7), y0+200, BLACK, WHITE, 32);
+    }
 }

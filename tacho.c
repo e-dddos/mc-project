@@ -29,7 +29,7 @@ void system_init(void) {
     configure_gpios();
     timer0A_init(200, sysClock); //set timer to send interrupt every 200ms
     draw_haw_logo();
-    while (i < 20) { //wait for 4 seconds
+    while (i < 10) { //wait for 2 seconds
         if (timer_flag) {
             i++;
             timer_flag = false;
