@@ -10,7 +10,7 @@
 #include "calc.h" //local calc of speed
 
 bool flag = false;
-uint16_t curr_spin_count, temp_spin_count  = 0;
+uint16_t curr_spin_count, temp_spin_count, distanceToday  = 0;
 
 void configure_gpios(void){
         // Set Port P Pins 0,1: 0 - S1, 1 - S2
@@ -42,6 +42,9 @@ void check_flag(void) {
     if (flag) {
                 temp_spin_count = curr_spin_count;
                 printf("Interrupt from timer! spin_count=%d\n", temp_spin_count);
+
+                dailyDistance(temp_spin_count);
+            
                 curr_spin_count = 0;
                 flag = false;
             }
@@ -81,22 +84,21 @@ void timer0A_isr(void) {
 
 //aux for interrupt related reading functions
 
-void readFrequency()
+int dailyDistance(int spin)
 {
-        //init timer and run for approx 1 sec, after next interrupt stop and return to speed func 
-}
-
-int readDirection()
-{
-        //activate after 00 pulse in interrupt and return pulse from s1 (can be changed to s2, doesn't really matter)
-         //return GPIO_PORTP_BASE;   //1 means forward, 0 means backwards
-}
-
-void dailyDistance()
-{
+        uint8_t wheelDiameter = 1; //wie gross man das Rad haben moechte
         //every time speed() is called, add time * speed
         //x = 1; //x is the approx. time needed for an interrupt
         //timer init
-
+        if(1 == 0)
+        {
+                //falls reset gedrueckt wird (muss noch implementiert werden)
+                distanceToday = 0;
+        }
+        else
+        {
+                distanceToday = distanceToday + (wheelDiameter * spin); //Zaehlt die daily distance hoch
+        }
         //dailyDistanceCount += x * speed(readFrequency());
+        return distanceToday;
 }
