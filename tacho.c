@@ -14,7 +14,7 @@ uint16_t curr_spin_count, temp_spin_count  = 0;
 uint8_t dir = 0; //0 - vorw, 1 - rueckw
 uint8_t dir_save = 1;
 
-
+//Configure Display, GPIOs, draw loading screen and draw tacho
 void system_init(void) {
     int i = 0;
     sysClock = SysCtlClockFreqSet(   SYSCTL_OSC_INT | SYSCTL_USE_PLL |SYSCTL_CFG_VCO_480,120000000); // Set system frequency to 120 MHz
@@ -28,7 +28,7 @@ void system_init(void) {
     #endif
     configure_gpios();
     timer0A_init(200, sysClock); //set timer to send interrupt every 200ms
-    draw_haw_logo();
+    draw_haw_logo(); //Draw loading screen
     while (i < 10) { //wait for 2 seconds
         if (timer_flag) {
             i++;
@@ -62,8 +62,9 @@ void isr_s1(void) {
 
 //Redraw tacho pointer every time timer flag is set, update direction if it has changed
 void run_tacho(void) {
-
     if (timer_flag) {
+                //500 is about the highest rotation count per second, the *5 comes because we get the number of rotations every 1/5 s = 200ms
+                //so for example if temp_spin_count=50, the angle of the tacho pointer will be be in the middle (90°)
                 draw_line_by_angle(TACHO_CENTER_X, TACHO_CENTER_Y, 220, temp_spin_count*5*180/500, BACKGROUND_COLOR, 1, false);
                 temp_spin_count = curr_spin_count;
                 curr_spin_count = 0;
@@ -103,7 +104,6 @@ void timer0A_init(uint32_t milliseconds, uint32_t sysClock) {
 
 // Interrupt Service Routine for Timer0A
 void timer0A_isr(void) {
-    // Clear the timer interrupt
-    TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
-    timer_flag = true;
+    TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT); // Clear the timer interrupt
+    timer_flag = true; //set timer flag
 }
