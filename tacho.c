@@ -10,7 +10,7 @@
 
 //Global variables
 bool timer_flag = false;
-uint16_t curr_spin_count, temp_spin_count  = 0;
+uint16_t curr_spin_count = 0, temp_spin_count = 0, total_spin_count = 0;
 uint8_t dir = 0; //0 - vorw, 1 - rueckw
 uint8_t dir_save = 1;
 
@@ -65,10 +65,11 @@ void run_tacho(void) {
     if (timer_flag) {
                 //500 is about the highest rotation count per second, the *5 comes because we get the number of rotations every 1/5 s = 200ms
                 //so for example if temp_spin_count=50, the angle of the tacho pointer will be be in the middle (90°)
-                draw_line_by_angle(TACHO_CENTER_X, TACHO_CENTER_Y, 220, temp_spin_count*5*180/500, BACKGROUND_COLOR, 1, false);
+                total_spin_count += curr_spin_count;
+                draw_line_by_angle(TACHO_CENTER_X, TACHO_CENTER_Y, 220, temp_spin_count*5*180/500, BACKGROUND_COLOR, 1, false); //remove the previous tacho pointer
                 temp_spin_count = curr_spin_count;
                 curr_spin_count = 0;
-                draw_line_by_angle(TACHO_CENTER_X, TACHO_CENTER_Y, 220, temp_spin_count*5*180/500, RED, 1, false);
+                draw_line_by_angle(TACHO_CENTER_X, TACHO_CENTER_Y, 220, temp_spin_count*5*180/500, RED, 1, false); //draw the new tacho pointer
                 timer_flag = false;
                 //Only update direction if it has changed
                 if (dir != dir_save) {
@@ -76,6 +77,7 @@ void run_tacho(void) {
                     draw_rectangle(700, 100, 750, 130, BACKGROUND_COLOR); //to remove the rest of 'V' after changing to 'R'
                     print_char('V'-4*dir,700, 100, GREEN, BACKGROUND_COLOR, FONT_SIZE_BIG); //'V' - 4*1 = 'R'. if dir = 1, 'R' will be printed
                 }
+                print_total_distance();
             }
 }
 
@@ -106,4 +108,10 @@ void timer0A_init(uint32_t milliseconds, uint32_t sysClock) {
 void timer0A_isr(void) {
     TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT); // Clear the timer interrupt
     timer_flag = true; //set timer flag
+}
+
+void print_total_distance(void) {
+    char distance_str[10];
+    sprintf(distance_str, "%.2f km", total_spin_count * 0.25 * 0.001); //0.25m per rotation. 0.001 to convert to km
+    print_string(distance_str, 50, 100, WHITE, BACKGROUND_COLOR, FONT_SIZE_SMALL);
 }
