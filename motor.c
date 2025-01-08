@@ -97,7 +97,7 @@ int dailyDistance(int spin)
         }
         else
         {
-                distanceToday = distanceToday + (wheelDiameter * spin); //Zaehlt die daily distance hoch
+                distanceToday = (distanceToday + (wheelDiameter * spin)) / 3600; //Zaehlt die daily distance hoch
         }
         //dailyDistanceCount += x * speed(readFrequency());
         return distanceToday;
