@@ -10,7 +10,8 @@
 #include "calc.h" //local calc of speed
 
 bool flag = false;
-uint16_t curr_spin_count, temp_spin_count, distanceToday  = 0;
+uint16_t curr_spin_count, temp_spin_count = 0;
+double dailyDistance = 0;
 
 void configure_gpios(void){
         // Set Port P Pins 0,1: 0 - S1, 1 - S2
@@ -84,7 +85,7 @@ void timer0A_isr(void) {
 
 //aux for interrupt related reading functions
 
-int dailyDistance(int spin)
+double dailyDistance(int spin)
 {
         uint8_t wheelDiameter = 1; //wie gross man das Rad haben moechte
         //every time speed() is called, add time * speed
