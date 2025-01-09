@@ -35,7 +35,7 @@ void print_char(char character, int x_pos, int y_pos, Color font_color, Color ba
 {
     int byte, y, byte_row;
     int i;
-    char byte = 0;
+    char byte_bitmap = 0;
     i = 0;
     char* bitmap;
     char char_width;
@@ -62,8 +62,8 @@ void print_char(char character, int x_pos, int y_pos, Color font_color, Color ba
             for (byte = 0; byte < char_width; byte++)
             {
                 i = byte + byte_row * char_width; //index of the byte 
-                byte = bitmap[i] >> y; //shift to the next bit
-                if (byte % 2 == 1) //check if the bit is set
+                byte_bitmap = bitmap[i] >> y; //shift to the next bit
+                if (byte_bitmap % 2 == 1) //check if the bit is set
                 {
                     write_pixel(font_color); //set pixel for character
                 }
