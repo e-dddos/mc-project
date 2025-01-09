@@ -197,3 +197,9 @@ void draw_haw_logo(void) {
         print_char('.', x0+150+space+i*(char_width_array['.'-32]+7), y0+200, BLACK, WHITE, 32);
     }
 }
+
+void draw_button(void) {
+    draw_rectangle(50, 170, 180, 230, RED); //Draw outline
+    draw_rectangle(52, 172, 178, 228, WHITE); //Draw inner part
+    print_string("RESET", 70, 185, RED, WHITE, 32);
+}

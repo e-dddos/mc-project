@@ -54,4 +54,5 @@ void draw_line(int x0, int y0, int x1, int y1, Color color, int width);
 void draw_line_by_angle(int x1, int y1, int length, int angle_deg, Color color, int width, bool tacho);
 void draw_tacho(void);
 void draw_haw_logo(void);
+void draw_button(void);
 #endif /* DRAW_H_ */

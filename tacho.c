@@ -18,6 +18,7 @@ uint8_t dir_save = 1;
 void system_init(void) {
     int i = 0;
     sysClock = SysCtlClockFreqSet(   SYSCTL_OSC_INT | SYSCTL_USE_PLL |SYSCTL_CFG_VCO_480,120000000); // Set system frequency to 120 MHz
+    touch_configure(); //Touch configuration
     init_ports_display(); // Init Port L for Display Control and Port M for Display Data
     // Display initialization
     #ifdef LARGE_DISPLAY
@@ -36,9 +37,11 @@ void system_init(void) {
         }
     }
     set_backgound(BACKGROUND_COLOR); // set background color
-    print_string("Tachometer", 50, 50, WHITE, BACKGROUND_COLOR, FONT_SIZE_SMALL);
+    print_string("Distanz:", 50, 50, WHITE, BACKGROUND_COLOR, FONT_SIZE_SMALL);
+    print_string("Tachometer", 230, 30, GREY, BACKGROUND_COLOR, FONT_SIZE_BIG);
     draw_tacho();
     print_total_distance();
+    draw_button();
 }
 //configure GPIO as Inputs and define ISR for S1
 void configure_gpios(void){
@@ -54,6 +57,16 @@ void configure_gpios(void){
         GPIOIntEnable(GPIO_PORTP_BASE, GPIO_PIN_0); // Allow request output from Port unit
         IntEnable(INT_GPIOP0);  // Allow request input to NVIC
 }
+
+void touch_configure(void)
+{
+	SYSCTL_RCGCGPIO_R = 0x0008; //Enable clock Port D
+	while ((SYSCTL_PRGPIO_R & 0x08) == 0); 	//GPIO Clock ready?
+	GPIO_PORTD_AHB_DEN_R = 0x1F;   			//PortD digital enable
+	GPIO_PORTD_AHB_DIR_R = 0x0D;   			//PortD Input/Output
+	GPIO_PORTD_AHB_DATA_R &= 0xF7; 			//Clk=0
+}
+
 //ISR for S1: increment spin count and read S2 for direction: if S2 is high, direction is forward (R), else backwards (V)
 void isr_s1(void) {
     GPIOIntClear(GPIO_PORTP_BASE,GPIO_PIN_0);
@@ -120,4 +133,9 @@ void print_total_distance(void) {
     draw_rectangle(50, 100, 200, 130, BACKGROUND_COLOR); //remove the previous distance
     sprintf(distance_str, "%.2f km", total_spin_count * 0.25 * 0.001); //0.25m per rotation. 0.001 to convert to km
     print_string(distance_str, 50, 100, WHITE, BACKGROUND_COLOR, FONT_SIZE_SMALL);
+}
+
+void reset_distance(void) {
+    total_spin_count = 0;
+    print_total_distance();
 }

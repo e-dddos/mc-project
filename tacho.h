@@ -30,11 +30,13 @@
 
 void system_init(void);
 void configure_gpios(void);
+void touch_configure(void);
 void timer0A_init(uint32_t milliseconds, uint32_t sysClock);
 void timer0A_isr(void);
 
 void run_tacho(void);
-
+void reset_distance(void);
+void print_total_distance(void);
 void isr_s1(void);
 
 #endif /* SRC_TACHO_H_ */
