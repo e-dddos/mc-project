@@ -1,25 +1,20 @@
 /*
  * draw.c
- *
+ * 
  *  Created on: 31 Oct 2024
  *      Author: edward
  */
 
 #include "draw.h"
 
+//write single pixel with given color, the window must be set before using this
 void write_pixel(Color color) {
     write_data((color >> 16) & 0xff); // red
     write_data((color >> 8) & 0xff);  // green
     write_data((color) & 0xff);       // blue
 }
 
-//write single pixel at given coordinates with given color
-void set_pixel(int x, int y, Color color) {
-    window_set(x, y, x, y); // Set the window to the pixel position
-    write_command(0x2C);    // Write pixel command
-    write_pixel(color);     // Write the pixel color
-}
-
+//Draw background
 void set_backgound(Color color)
 {
     printf("Start Background Pixel by Pixel set\n"); // for debug only
@@ -35,50 +30,52 @@ void set_backgound(Color color)
     printf("Background ready \n"); // for debug only
 }
 
+//Print character from bitmap header on a given position with given font color and background color
 void print_char(char character, int x_pos, int y_pos, Color font_color, Color background_color, int font_size)
 {
-    int x, y, byte_row;
+    int byte, y, byte_row;
     int i;
-    char byte = 0;
+    char byte_bitmap = 0;
     i = 0;
     char* bitmap;
     char char_width;
     //We will use two font sizes, 32 and 64
-    if (font_size == FONT_SIZE_SMALL)
+    if (font_size == FONT_SIZE_SMALL) //use small font from ubuntu_bitmap_32.h
     {
-        bitmap = char_addr[character - 32];
+        bitmap = char_addr[character - 32]; //-32 because the first available character in these bitmap headers is 32 = ' ' (space)
         char_width = char_width_array[character - 32];
     }
-    else //font_size == FONT_SIZE_BIG
+    else //font_size == FONT_SIZE_BIG use big font from ubuntu_bitmap_64.h
     {
         bitmap = big_char_addr[character - 32];
         char_width = big_char_width_array[character - 32];
     }
-    //see https://onmenwhostareongraphs.wordpress.com/2019/10/20/monochrome-bitmap-fonts-in-c-header-files/ for understanding bitmaps
-    
+    /*see https://onmenwhostareongraphs.wordpress.com/2019/10/20/monochrome-bitmap-fonts-in-c-header-files/ for understanding bitmaps*/
     for (byte_row = 0; byte_row < font_size / 8; byte_row++)
     {
-        window_set(x_pos, y_pos + byte_row * 8, x_pos + char_width - 1, (y_pos + byte_row * 8) + 7); // set rectangle position see B.4
-        write_command(0x2C);                                                                                 // write pixel command
+        window_set(x_pos, y_pos + byte_row * 8, x_pos + char_width - 1, (y_pos + byte_row * 8) + 7);
+        write_command(0x2C);
+        //For each bit in a byte
         for (y = 0; y < 8; y++)
         {
-            for (x = 0; x < char_width; x++)
+            //For each byte in a byte row
+            for (byte = 0; byte < char_width; byte++)
             {
-                i = x + byte_row * char_width;
-                byte = bitmap[i] >> y; //shift to the next bit
-                if (byte % 2 == 1) //check if the bit is set
+                i = byte + byte_row * char_width; //index of the byte 
+                byte_bitmap = bitmap[i] >> y; //shift to the next bit
+                if (byte_bitmap % 2 == 1) //check if the bit is set
                 {
-                    write_pixel(font_color);
+                    write_pixel(font_color); //set pixel for character
                 }
                 else
                 {
-                    write_pixel(background_color);
+                    write_pixel(background_color); //set pixel for background
                 }
             }
         }
     }
 }
-
+//Print a string on given coordinates with given font color and background color
 void print_string(char* string, int x_pos, int y_pos, Color font_color, Color background_color, int font_size)
 {
     int i = 0;
@@ -87,6 +84,7 @@ void print_string(char* string, int x_pos, int y_pos, Color font_color, Color ba
     while (string[i] != '\0') //loop until the end of the string
     {
         print_char(string[i], x_current, y_current, font_color, background_color, font_size);
+        //calculate the location of the next character of the string:
         if (font_size == FONT_SIZE_SMALL) { 
             x_current = x_current + char_width_array[string[i] - 32] + 7; //start of the next character is the end of the current character + 7
         }
@@ -154,6 +152,7 @@ void draw_line(int x0, int y0, int x1, int y1, Color color, int width) {
     }
 }
 
+//Draw the tachometer segments with speed numbers on them
 void draw_tacho(void) {
     int i = 0;
     for (i = 0; i <= 180; i += 180/TACHO_NUM_SEGMENTS) {
@@ -170,6 +169,7 @@ void draw_tacho(void) {
     }
 }
 
+//Loading screen with HAW logo
 void draw_haw_logo(void) {
     //Constants for HAW logo:
     int x0 = 200;

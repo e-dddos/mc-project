@@ -1,6 +1,9 @@
 /*
  * draw.h
  *
+ * Contains functions and macros that are used for the displaying various 
+ * forms and characters on the display
+ *  
  *  Created on: 31 Oct 2024
  *      Author: edward
  */
@@ -42,7 +45,6 @@ GREY=0x00AAAAAA,RED=0x00FF0000,GREEN=0x0000FF00,
 BLUE=0x000000FF,YELLOW=0x00FFFF00, DARK_BLUE = 0x00000022,
 LIGHT_BLUE = 0x009999FF, ORANGE = 0x00FF8800, PURPLE = 0x00AA00FF} Color;  
 
-void set_pixel(int x, int y, Color color);
 void write_pixel(Color color);
 void set_backgound(Color color);
 void print_char(char character, int x_pos, int y_pos, Color font_color, Color background_color, int font_size);

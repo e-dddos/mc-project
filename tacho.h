@@ -1,6 +1,9 @@
 /*
  * motor.h
  *
+ * Contains configuring functions and ISRs for timer and S1, 
+ * as well as the main function for tacho run_tacho(void)
+ * 
  *  Created on: 28 Nov 2024
  *      Author: edward
  */
