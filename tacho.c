@@ -10,7 +10,7 @@
 
 //Global variables
 bool timer_flag = false;
-uint16_t curr_spin_count = 0, temp_spin_count = 0, total_spin_count = 0, total_spin_count_save = 0;
+uint16_t spin_count = 0, curr_spin_count = 0, prev_spin_count = 0, total_spin_count = 0, total_spin_count_save = 0;
 uint8_t dir = 0; //0 - vorw, 1 - rueckw
 uint8_t dir_save = 1;
 
@@ -38,7 +38,7 @@ void system_init(void) {
     }
     set_backgound(BACKGROUND_COLOR); // set background color
     print_string("Distanz:", 50, 50, WHITE, BACKGROUND_COLOR, FONT_SIZE_SMALL);
-    print_string("Tachometer", 230, 30, GREY, BACKGROUND_COLOR, FONT_SIZE_BIG);
+    //print_string("Tachometer", 230, 30, GREY, BACKGROUND_COLOR, FONT_SIZE_BIG);
     draw_tacho();
     print_total_distance();
     draw_button();
@@ -70,7 +70,7 @@ void touch_configure(void)
 //ISR for S1: increment spin count and read S2 for direction: if S2 is high, direction is forward (R), else backwards (V)
 void isr_s1(void) {
     GPIOIntClear(GPIO_PORTP_BASE,GPIO_PIN_0);
-    curr_spin_count++;
+    spin_count++;
     dir = (GPIOPinRead(GPIO_PORTP_BASE, GPIO_PIN_1) & GPIO_PIN_1) >> 1;
 }
 
@@ -78,13 +78,15 @@ void isr_s1(void) {
 void run_tacho(void) {
     if (timer_flag) {
                 //500 is about the highest rotation count per second, the *5 comes because we get the number of rotations every 1/5 s = 200ms
-                //so for example if temp_spin_count=50, the angle of the tacho pointer will be be in the middle (90°)
+                //so for example if prev_spin_count=50, the angle of the tacho pointer will be be in the middle (90°)
+                curr_spin_count = spin_count; //save he current spin count 
+                spin_count = 0; //reset the spin count so it can continue to count when we update the pointer
                 total_spin_count_save = total_spin_count;
                 total_spin_count += curr_spin_count;
-                draw_line_by_angle(TACHO_CENTER_X, TACHO_CENTER_Y, 220, temp_spin_count*5*180/500, BACKGROUND_COLOR, 1, false); //remove the previous tacho pointer
-                temp_spin_count = curr_spin_count;
+                draw_line_by_angle(TACHO_CENTER_X, TACHO_CENTER_Y, 220, prev_spin_count*5*180/500, BACKGROUND_COLOR, 1, false); //remove the previous tacho pointer
+                prev_spin_count = curr_spin_count;
                 curr_spin_count = 0;
-                draw_line_by_angle(TACHO_CENTER_X, TACHO_CENTER_Y, 220, temp_spin_count*5*180/500, RED, 1, false); //draw the new tacho pointer
+                draw_line_by_angle(TACHO_CENTER_X, TACHO_CENTER_Y, 220, prev_spin_count*5*180/500, RED, 1, false); //draw the new tacho pointer
                 timer_flag = false;
                 //Only update direction if it has changed
                 if (dir != dir_save) {
@@ -131,7 +133,7 @@ void timer0A_isr(void) {
 void print_total_distance(void) {
     char distance_str[10];
     draw_rectangle(50, 100, 200, 130, BACKGROUND_COLOR); //remove the previous distance
-    sprintf(distance_str, "%.2f km", total_spin_count * 0.25 * 0.001); //0.25m per rotation. 0.001 to convert to km
+    sprintf(distance_str, "%.2f km", total_spin_count * 0.22222 * 0.001); //0.22222m per rotation. 0.001 to convert to km
     print_string(distance_str, 50, 100, WHITE, BACKGROUND_COLOR, FONT_SIZE_SMALL);
 }
 
