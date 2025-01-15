@@ -69,9 +69,9 @@ void touch_configure(void)
 
 //ISR for S1: increment spin count and read S2 for direction: if S2 is high, direction is forward (R), else backwards (V)
 void isr_s1(void) {
-    GPIOIntClear(GPIO_PORTP_BASE,GPIO_PIN_0);
-    spin_count++;
-    dir = (GPIOPinRead(GPIO_PORTP_BASE, GPIO_PIN_1) & GPIO_PIN_1) >> 1;
+    GPIOIntClear(GPIO_PORTP_BASE,GPIO_PIN_0); //clear interrupt bit
+    spin_count++; //Increment spin count
+    dir = (GPIOPinRead(GPIO_PORTP_BASE, GPIO_PIN_1) & GPIO_PIN_1) >> 1; //read S2
 }
 
 //Redraw tacho pointer every time timer flag is set, update direction if it has changed
@@ -96,7 +96,7 @@ void run_tacho(void) {
         }
     }
 }
-
+//Configure the Timer to send an Interrupt every milliseconds ms and set the ISR
 void timer0A_init(uint32_t milliseconds, uint32_t sysClock) {
     // Enable Timer0 peripheral
     SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0);
